@@ -1,7 +1,7 @@
 #if !defined(PGN_MOVE_INFO_H_INCLUDED)
 #define PGN_MOVE_INFO_H_INCLUDED
 
-#include "pgn.h"
+#include "../polyglot/src/pgn.h"
 
 struct PGNMoveInfo {
   char move[PGN_STRING_SIZE];

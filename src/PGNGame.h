@@ -1,10 +1,10 @@
 #if !defined(PGN_GAME_H_INCLUDED)
 #define PGN_GAME_H_INCLUDED
 
-#include "neural/encoder.h"
-#include "neural/network.h"
-#include "neural/writer.h"
-#include "pgn.h"
+#include "../lc0/src/neural/encoder.h"
+#include "../lc0/src/neural/network.h"
+#include "../lc0/src/neural/writer.h"
+#include "../polyglot/src/pgn.h"
 #include "polyglot_lib.h"
 #include "PGNMoveInfo.h"
 

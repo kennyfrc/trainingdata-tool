@@ -7,9 +7,9 @@
 #include <queue>
 #include <unordered_map>
 
-#include "neural/encoder.h"
-#include "neural/network.h"
-#include "neural/writer.h"
+#include "../lc0/src/neural/encoder.h"
+#include "../lc0/src/neural/network.h"
+#include "../lc0/src/neural/writer.h"
 
 #include "V4TrainingDataHashUtil.h"
 

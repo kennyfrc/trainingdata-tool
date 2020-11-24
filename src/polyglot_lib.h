@@ -3,21 +3,21 @@
 #if !defined(POLYGLOT_LIB_H_INCLUDED)
 #define POLYGLOT_LIB_H_INCLUDED
 
-#include "attack.h"
-#include "board.h"
-#include "colour.h"
-//#include "epd.h"
-#include "fen.h"
-#include "game.h"
-#include "move.h"
-#include "move_do.h"
-#include "move_gen.h"
-#include "move_legal.h"
-#include "pgn.h"
-#include "piece.h"
-#include "san.h"
-#include "search.h"
-#include "square.h"
+#include "../polyglot/src/attack.h"
+#include "../polyglot/src/board.h"
+#include "../polyglot/src/colour.h"
+// #include "../polyglot/src/epd.h"
+#include "../polyglot/src/fen.h"
+#include "../polyglot/src/game.h"
+#include "../polyglot/src/move.h"
+#include "../polyglot/src/move_do.h"
+#include "../polyglot/src/move_gen.h"
+#include "../polyglot/src/move_legal.h"
+#include "../polyglot/src/pgn.h"
+#include "../polyglot/src/piece.h"
+#include "../polyglot/src/san.h"
+#include "../polyglot/src/search.h_"
+#include "../polyglot/src/square.h"
 
 // dss: init everything
 extern void polyglot_init();

@@ -7,6 +7,7 @@ set(CMAKE_REQUIRED_FLAGS -std=c++17)
 
 file(GLOB_RECURSE sources src/*.cpp src/*.h)
 
+
 set (
     lc0
     "lc0/src/chess/bitboard.cc"
@@ -38,12 +39,13 @@ set_target_properties(trainingdata-tool PROPERTIES
 )
 
 if (UNIX)
-    target_link_libraries(trainingdata-tool -lpthread -lstdc++fs)
+    target_link_libraries(trainingdata-tool -lpthread)
 endif(UNIX)
 
 find_package(Boost 1.65.0)
 
 include_directories(
+    "/Users/kennyfrc/Downloads/Dropbox/lc0-engines/lc0-files/lc0-0.23-mac-opencl/subprojects/protobuf-3.5.1"
     "lc0/src"
     "lc0/src/chess"
     "lc0/src/neural"

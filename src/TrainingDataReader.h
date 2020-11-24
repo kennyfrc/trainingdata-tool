@@ -5,7 +5,7 @@
 #include <vector>
 #include <zlib.h>
 
-#include "neural/writer.h"
+#include "../lc0/src/neural/writer.h"
 
 class TrainingDataReader {
 public:
