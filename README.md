@@ -4,7 +4,7 @@ Tool to generate [lc0](https://github.com/LeelaChessZero/lc0) training data. Use
 ## Usage
 Pass the PGN input file and it will output training data in the same way lc0 selfplay does. Example:
 ```
-trainingdata-tool 2008_SCT_LadiesOpen.pgn
+trainingdata-tool Kasparov.pgn
 ```
 
 There are 4 options suported so far:
