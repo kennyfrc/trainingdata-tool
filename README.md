@@ -8,9 +8,10 @@ Tool to generate [lc0](https://github.com/LeelaChessZero/lc0) training data. Use
 Whether you plan to compile this for windows or mac, the guidance that I can give to you right now to make this work on your machine is to ensure that 1) you get the exact commits from the respective lc0, polyglot, and zlib folders by doing `git clone <folder>` and then `git checkout <commit hash>` and 2) you need to update the header files in the `src` folder as it draws from the polyglot folder. There are also some proto issues that can be resolved by ensuring that you have `lc0/subprojects/protobuf*` in your local machine. 
 
 In order to compile this, you need:
-1. Cmake
-2. Make
-3. Exact commits in zlib, polyglot, lc0 in Daniel's original file (or just use mine)
+1. Cmake (`sudo apt-get install cmake`)
+2. Boost for Ubuntu (`sudo apt-get install libboost-all-dev`)
+3. Make
+4. Exact commits in zlib, polyglot, lc0 in Daniel's original file (or just use mine)
 
 Example:
 ```
