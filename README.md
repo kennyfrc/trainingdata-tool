@@ -5,7 +5,7 @@ In order to maximize this tool, it's best to add Q and Policy data from Stockfis
 
 ---
 
-## Compilation Guide
+## Compilation Guide (Linux)
 
 In order to compile this, you need:
 1. Cmake (`sudo apt-get install cmake`)
@@ -35,7 +35,11 @@ cmake CMakeLists.txt
 make
 ```
 
-You should expect a `trainingdata-tool` binary at the end of it.
+## Compilation Guide (Mac)
+
+For mac, the process is similar with the exception of boost.
+
+## Q Ratio Flag
 
 Also note that there is an undocumented flag called `-dedup-q-ratio` which allows you to set the q-ratio.
 
@@ -43,7 +47,6 @@ Example:
 ```
 trainingdata-tool -max-games-to-convert 1000 -files-per-dir 500 -v -lichess-mode -dedup-q-ratio 0.2
 ```
-
 
 ---
 
