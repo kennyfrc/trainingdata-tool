@@ -1,6 +1,8 @@
 # trainingdata-tool
 Tool to generate [lc0](https://github.com/LeelaChessZero/lc0) training data. Useful for [Supervised Learning](https://github.com/dkappe/leela-chess-weights/wiki/Supervised-Learning) from PGN games.
 
+In order to maximize this tool, it's best to add Q and Policy data from Stockfish or Leela using [Lichess Artist](https://github.com/kennyfrc/lichess-artist). Lichess Artist allows you to generate lichess-style annotations which `trainingdata-tool` can accept as inputs.
+
 ---
 
 ## Compilation Guide
