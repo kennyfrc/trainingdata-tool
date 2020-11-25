@@ -3,21 +3,34 @@ Tool to generate [lc0](https://github.com/LeelaChessZero/lc0) training data. Use
 
 ---
 
-## Kenn's notes
-
-Whether you plan to compile this for windows or mac, the guidance that I can give to you right now to make this work on your machine is to ensure that 1) you get the exact commits from the respective lc0, polyglot, and zlib folders by doing `git clone <folder>` and then `git checkout <commit hash>` and 2) you need to update the header files in the `src` folder as it draws from the polyglot folder. There are also some proto issues that can be resolved by ensuring that you have `lc0/subprojects/protobuf*` in your local machine. 
+## Compilation Guide
 
 In order to compile this, you need:
 1. Cmake (`sudo apt-get install cmake`)
 2. Boost for Ubuntu (`sudo apt-get install libboost-all-dev`)
-3. Make
-4. Exact commits in zlib, polyglot, lc0 in Daniel's original file (or just use mine)
+3. Clone the repo commits (see the hashes) in zlib, polyglot, lc0 in Daniel's original file (or just use mine)
+4. Make
+
+In the original source file, there were a lot of dependency issues in `src` that this repo has been resolved.
 
 Example:
 ```
+sudo apt-get install cmake
+sudo apt-get install libboost-all-dev
+git clone https://github.com/DanielUranga/lc0.git
+cd lc0
+git checkout 015583a28b
+cd ..
+git clone https://github.com/DanielUranga/polyglot.git
+cd polyglot
+git checkout 
+git checkout 830fa94674
+cd ..
+cd zlib
+git checkout cacf7f1d4e
+cd ..
 cmake CMakeLists.txt
 make
-// as you go through make, debug and fix dependencies as you go
 ```
 
 You should expect a `trainingdata-tool` binary at the end of it.
