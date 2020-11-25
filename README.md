@@ -21,6 +21,14 @@ make
 
 You should expect a `trainingdata-tool` binary at the end of it.
 
+Also note that there is an undocumented flag called `-dedup-q-ratio` which allows you to set the q-ratio.
+
+Example:
+```
+trainingdata-tool -max-games-to-convert 1000 -files-per-dir 500 -v -lichess-mode -dedup-q-ratio 0.2
+```
+
+
 ---
 
 ## Usage

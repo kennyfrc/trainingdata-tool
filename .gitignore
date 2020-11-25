@@ -27,6 +27,12 @@
 *.out
 *.app
 
+# Stray pgn files
+*.pgn
+
+# Stray gzip files
+supervised-0/*.gz
+
 \.vs/
 
 CMakeSettings\.json
@@ -50,3 +56,4 @@ Makefile
 trainingdata-tool
 
 Project\.cbp
+
