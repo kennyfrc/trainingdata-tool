@@ -25,9 +25,9 @@ git checkout 015583a28b
 cd ..
 git clone https://github.com/DanielUranga/polyglot.git
 cd polyglot
-git checkout 
 git checkout 830fa94674
 cd ..
+git clone https://github.com/madler/zlib.git
 cd zlib
 git checkout cacf7f1d4e
 cd ..
