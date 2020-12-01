@@ -19,6 +19,7 @@ struct PGNGame {
   char result[PGN_STRING_SIZE];
   char fen[PGN_STRING_SIZE];
   std::vector<PGNMoveInfo> moves;
+  std::vector<PGNMoveInfo> variations;
 
   explicit PGNGame(pgn_t* pgn);
   std::vector<lczero::V4TrainingData> getChunks(Options options) const;

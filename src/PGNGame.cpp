@@ -61,10 +61,15 @@ PGNGame::PGNGame(pgn_t* pgn) {
   strncpy(this->result, pgn->result, PGN_STRING_SIZE);
   strncpy(this->fen, pgn->fen, PGN_STRING_SIZE);
 
+
   char str[256];
   while (pgn_next_move(pgn, str, 256)) {
     this->moves.emplace_back(str, pgn->last_read_comment, pgn->last_read_nag);
+    // std::cout << "last element\n";
+    // std::cout << this->moves.back().move << std::endl;
   }
+
+  std::cout << "outside the loop\n";
 }
 
 std::vector<lczero::V4TrainingData> PGNGame::getChunks(Options options) const {
@@ -114,7 +119,7 @@ std::vector<lczero::V4TrainingData> PGNGame::getChunks(Options options) const {
     // Extract move from pgn
     int move = move_from_san(pgn_move.move, board);
     if (move == MoveNone || !move_is_legal(move, board)) {
-      std::cout << "illegal move \"" << pgn_move.move << std::endl;
+      std::cout << "illegal move: " << pgn_move.move << std::endl;
       break;
     }
 
@@ -191,8 +196,10 @@ std::vector<lczero::V4TrainingData> PGNGame::getChunks(Options options) const {
             result = "???";
             break;
         }
+        // std::cout << "legal moves\n";
+        // std::cout << legal_moves[0].as_string() << "\n";
         std::cout << "Write chunk: [" << lc0_move.as_string() << ", " << result
-                  << ", " << Q << "]\n";
+                  << ", " << Q <<"]\n";
       }
     }
 

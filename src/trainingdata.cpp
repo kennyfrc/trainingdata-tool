@@ -1,6 +1,8 @@
 #include "trainingdata.h"
+#include "dbg.h"
 
 #include <cstring>
+#include <iostream>
 
 uint64_t resever_bits_in_bytes(uint64_t v) {
   v = ((v >> 1) & 0x5555555555555555ull) | ((v & 0x5555555555555555ull) << 1);
@@ -24,6 +26,8 @@ lczero::V4TrainingData get_v4_training_data(
 
   // Populate legal moves with probability "0"
   for (lczero::Move move : legal_moves) {
+    // std::cout << "returning move\n";
+    // std::cout << move.as_string() << "\n";
     result.probabilities[move.as_nn_index()] = 0;
   }
 
