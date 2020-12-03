@@ -25,4 +25,8 @@ struct PGNGame {
   std::vector<lczero::V4TrainingData> getChunks(Options options) const;
 };
 
+bool extract_lichess_comment_score(const char* comment, float& Q);
+float convert_sf_score_to_win_probability(float score);
+lczero::Move poly_move_to_lc0_move(move_t move, board_t* board);
+
 #endif
