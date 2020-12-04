@@ -245,10 +245,9 @@ std::vector<lczero::V4TrainingData> PGNGame::getChunks(Options options) const {
             result = "???";
             break;
         }
-        // std::cout << "legal moves\n";
-        // std::cout << legal_moves[0].as_string() << "\n";
-        std::cout << "Write chunk: [" << lc0_move.as_string() << ", " << result
-                  << ", " << pgn_move.q <<"]\n";
+        std::cout << "Note: for the training chunk, Q and D scores are based on the side's POV." << std::endl; 
+        std::cout << "Write chunk: [" << "Move: " << lc0_move.as_string() << ", " << "Result: " << result
+                  << ", " << "Root Q: " << chunk.root_q << ", " << "Best Q: " << chunk.best_q <<  ", " << "Root D: " << chunk.root_d << ", " << "Best D: " << chunk.best_d <<"]\n";
       }
     }
 
