@@ -83,7 +83,7 @@ lczero::V4TrainingData get_v4_training_data(
   // Set policy vector
   std::vector<MovePolicy> move_policies;
 
-  // Set main move's move and Q
+  // Set main move's move, Q, and D
   MovePolicy main_move;
   main_move.played = played_move;
   main_move.q_value = Q;
@@ -97,7 +97,7 @@ lczero::V4TrainingData get_v4_training_data(
 
   move_policies.emplace_back(main_move);
 
-  // Emplace variation's lc0 move and Q
+  // Set variation's move, Q, and D
   for (auto variation : variations) {
     if(move_no == variation.move_no) {
       float engine_score;
@@ -132,9 +132,10 @@ lczero::V4TrainingData get_v4_training_data(
     }
   }
 
+  // Have a place where all policy weights are assigned per move
   std::vector<MovePolicy> updated_move_policies = transform_with_softmax(move_policies, history.Last());
 
-  // Assign probabilities for each move
+  // Assign probabilities for the main move and variations
   for (auto move : updated_move_policies) {
     result.probabilities[move.played.as_nn_index()] = move.policy_weight;
   }
@@ -183,12 +184,12 @@ lczero::V4TrainingData get_v4_training_data(
   }
 
   if(position.IsBlackToMove()) {
-    float q_min, d_max;
+    float q_min, d_min;
     q_min = *min_element(q_values.begin(), q_values.end());
-    d_max = *max_element(d_values.begin(), d_values.end());
+    d_min = *min_element(d_values.begin(), d_values.end());
     result.best_q = q_min != 0.0f ? q_min : 0.0f;
     result.root_q = Q != 0.0f ? -Q : 0.0f;
-    result.best_d = d_max > 0.0f ? d_max : 0.0f;
+    result.best_d = d_min > 0.0f ? d_min : 0.0f;
     result.root_d = main_move.d_value > 0.0f ? main_move.d_value : 0.0f;
     // std::cout << " |-- Best q value: " << result.best_q << std::endl;
     // std::cout << " |-- Root q value: " << result.root_q << std::endl;
