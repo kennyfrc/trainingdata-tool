@@ -1,5 +1,6 @@
 #include "PGNGame.h"
 #include "trainingdata.h"
+#include "dbg.h"
 
 #include <cstring>
 #include <iostream>
@@ -55,7 +56,9 @@ std::vector<MovePolicy> transform_with_softmax(std::vector<MovePolicy> move_poli
   }
 
   // check if transformed successfully
-  assert(policy_sum == 1);
+  // assert_eq(policy_sum, 1.0f);
+  std::cout << "policy_sum: " << policy_sum << std::endl;
+  // exit(0);
 
   return final_move_policies;
 }
