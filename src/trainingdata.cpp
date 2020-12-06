@@ -28,25 +28,27 @@ std::vector<MovePolicy> transform_with_softmax(std::vector<MovePolicy> move_poli
   }
 
   // d score was also snuck in here
-  // d score is based upon contempt 24/25 in sf
   // this is more of a heuristic than a "scientific" decision
-  // if side is losing, then it's zero'd out
-  // therefore intuition is as follows: "when losing, look to draw" / "when winning, look to be aggressive"
+  // black has higher draw probability than white
 
   for(auto move : move_policies) {
     MovePolicy updated_move;
     if(position.IsBlackToMove()) {
       updated_move.played = move.played;
       updated_move.q_value = -move.q_value;
-      updated_move.d_value = -move.q_value / 4.0;
+      updated_move.d_value = -move.q_value > 0.0f ? (1.0f-(-move.q_value))*0.50f : (1.0f-(move.q_value))*0.50f;
       updated_move.policy_weight = exp(-move.q_value) / k_sum;
       final_move_policies.emplace_back(updated_move);
+      assert(updated_move.d_value >= 0 && updated_move.d_value <= 1);
+      assert(updated_move.q_value >= -1 && updated_move.q_value <= 1);
     } else {
       updated_move.played = move.played;
       updated_move.q_value = move.q_value;
-      updated_move.d_value = -(move.q_value / 4.0);
+      updated_move.d_value = move.q_value > 0.0f ? (1.0f-(move.q_value))*0.25f : (1.0f-(-move.q_value))*0.25f;
       updated_move.policy_weight = exp(move.q_value) / k_sum;
       final_move_policies.emplace_back(updated_move);
+      assert(updated_move.d_value >= 0 && updated_move.d_value <= 1);
+      assert(updated_move.q_value >= -1 && updated_move.q_value <= 1);
     }
   }
 
@@ -93,10 +95,13 @@ lczero::V4TrainingData get_v4_training_data(
   main_move.policy_weight = 0.0f;
 
   if(history.Last().IsBlackToMove()) {
-    main_move.d_value = Q / 4.0;
+    main_move.d_value = -Q > 0.0f ? (1.0f-(-Q))*0.50f : (1.0f-(Q))*0.50f;
   } else {
-    main_move.d_value = -Q / 4.0;
+    main_move.d_value = Q > 0.0f ? (1.0f-(Q))*0.25f : (1.0f-(-Q))*0.25f;
   }
+
+  assert(main_move.d_value >= 0 && main_move.d_value <= 1);
+  assert(main_move.q_value >= -1 && main_move.q_value <= 1);
 
   move_policies.emplace_back(main_move);
 
@@ -187,25 +192,25 @@ lczero::V4TrainingData get_v4_training_data(
   }
 
   if(position.IsBlackToMove()) {
-    float q_min, d_min;
+    float q_min, d_max;
     q_min = *min_element(q_values.begin(), q_values.end());
-    d_min = *min_element(d_values.begin(), d_values.end());
+    d_max = *max_element(d_values.begin(), d_values.end());
     result.best_q = q_min != 0.0f ? q_min : 0.0f;
     result.root_q = Q != 0.0f ? -Q : 0.0f;
-    result.best_d = d_min > 0.0f ? d_min : 0.0f;
-    result.root_d = main_move.d_value > 0.0f ? main_move.d_value : 0.0f;
+    result.best_d = d_max;
+    result.root_d = main_move.d_value;
     // std::cout << " |-- Best q value: " << result.best_q << std::endl;
     // std::cout << " |-- Root q value: " << result.root_q << std::endl;
     // std::cout << " |-- Best d value: " << result.best_d << std::endl;
     // std::cout << " |-- Root d value: " << result.root_d << std::endl;
   } else {
-    float q_max, d_min;
+    float q_max, d_max;
     q_max = *max_element(q_values.begin(), q_values.end());
-    d_min = *min_element(d_values.begin(), d_values.end());
+    d_max = *max_element(d_values.begin(), d_values.end());
     result.best_q = q_max != 0.0f ? q_max : 0.0f;
     result.root_q = Q != 0.0f ? Q : 0.0f;
-    result.best_d = d_min < 0.0f ? d_min : 0.0f;
-    result.root_d = main_move.d_value < 0.0f ? main_move.d_value : 0.0f;
+    result.best_d = d_max;
+    result.root_d = main_move.d_value;
     // std::cout << " |-- Best q value: " << result.best_q << std::endl;
     // std::cout << " |-- Root q value: " << result.root_q << std::endl;
     // std::cout << " |-- Best d value: " << result.best_d << std::endl;

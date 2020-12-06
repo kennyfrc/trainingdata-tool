@@ -59,8 +59,8 @@ Project\.cbp
 
 supervised-*
 
-src/dbg.h
-
 check_chunks.sh
 
 TODO.md
+
+sl-data
