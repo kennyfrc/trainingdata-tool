@@ -5,6 +5,8 @@
 #include <cstring>
 #include <iostream>
 #include <numeric>
+#include <algorithm>
+#include <cmath>
 
 uint64_t resever_bits_in_bytes(uint64_t v) {
   v = ((v >> 1) & 0x5555555555555555ull) | ((v & 0x5555555555555555ull) << 1);
