@@ -23,7 +23,7 @@ std::vector<MovePolicy> transform_with_softmax(std::vector<MovePolicy> move_poli
   std::vector<MovePolicy> final_move_policies;
   for(auto move : move_policies) {
     if(position.IsBlackToMove()) {
-      k_sum += exp(-move.q_value);
+      k_sum += exp(-1*move.q_value);
     } else {
       k_sum += exp(move.q_value);
     }
@@ -37,16 +37,16 @@ std::vector<MovePolicy> transform_with_softmax(std::vector<MovePolicy> move_poli
     MovePolicy updated_move;
     if(position.IsBlackToMove()) {
       updated_move.played = move.played;
-      updated_move.q_value = -move.q_value;
-      updated_move.d_value = -move.q_value > 0.0f ? (1.0f-(-move.q_value))*0.50f : (1.0f-(move.q_value))*0.50f;
-      updated_move.policy_weight = exp(-move.q_value) / k_sum;
+      updated_move.q_value = -1*move.q_value;
+      updated_move.d_value = (-1*move.q_value) > 0.0f ? (1.0f-(-1*move.q_value))*0.50f : (1.0f-(move.q_value))*0.50f;
+      updated_move.policy_weight = exp(-1*move.q_value) / k_sum;
       final_move_policies.emplace_back(updated_move);
       assert(updated_move.d_value >= 0 && updated_move.d_value <= 1);
       assert(updated_move.q_value >= -1 && updated_move.q_value <= 1);
     } else {
       updated_move.played = move.played;
       updated_move.q_value = move.q_value;
-      updated_move.d_value = move.q_value > 0.0f ? (1.0f-(move.q_value))*0.25f : (1.0f-(-move.q_value))*0.25f;
+      updated_move.d_value = move.q_value > 0.0f ? (1.0f-(move.q_value))*0.25f : (1.0f-(-1*move.q_value))*0.25f;
       updated_move.policy_weight = exp(move.q_value) / k_sum;
       final_move_policies.emplace_back(updated_move);
       assert(updated_move.d_value >= 0 && updated_move.d_value <= 1);
@@ -97,9 +97,9 @@ lczero::V4TrainingData get_v4_training_data(
   main_move.policy_weight = 0.0f;
 
   if(history.Last().IsBlackToMove()) {
-    main_move.d_value = -Q > 0.0f ? (1.0f-(-Q))*0.50f : (1.0f-(Q))*0.50f;
+    main_move.d_value = (-1*Q) > 0.0f ? (1.0f-(-1*Q))*0.50f : (1.0f-(Q))*0.50f;
   } else {
-    main_move.d_value = Q > 0.0f ? (1.0f-(Q))*0.25f : (1.0f-(-Q))*0.25f;
+    main_move.d_value = Q > 0.0f ? (1.0f-(Q))*0.25f : (1.0f-(-1*Q))*0.25f;
   }
 
   assert(main_move.d_value >= 0 && main_move.d_value <= 1);
@@ -198,9 +198,10 @@ lczero::V4TrainingData get_v4_training_data(
     q_min = *min_element(q_values.begin(), q_values.end());
     d_max = *max_element(d_values.begin(), d_values.end());
     result.best_q = q_min != 0.0f ? q_min : 0.0f;
-    result.root_q = Q != 0.0f ? -Q : 0.0f;
+    result.root_q = Q != 0.0f ? (-1*Q) : 0.0f;
     result.best_d = d_max;
     result.root_d = main_move.d_value;
+    // for debugging
     // std::cout << " |-- Best q value: " << result.best_q << std::endl;
     // std::cout << " |-- Root q value: " << result.root_q << std::endl;
     // std::cout << " |-- Best d value: " << result.best_d << std::endl;
@@ -213,6 +214,7 @@ lczero::V4TrainingData get_v4_training_data(
     result.root_q = Q != 0.0f ? Q : 0.0f;
     result.best_d = d_max;
     result.root_d = main_move.d_value;
+    // for debugging
     // std::cout << " |-- Best q value: " << result.best_q << std::endl;
     // std::cout << " |-- Root q value: " << result.root_q << std::endl;
     // std::cout << " |-- Best d value: " << result.best_d << std::endl;

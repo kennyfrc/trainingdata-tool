@@ -7,9 +7,21 @@
 #include <regex>
 #include <sstream>
 #include <vector>
+#include <math.h>
 
+// win probability based on
+// the inverse of the Q to cp formula (111.7 * np.tan(1.5620688421 * q))
 float convert_sf_score_to_win_probability(float score) {
-  return 2 / (1 + exp(-0.4 * score)) - 1;
+  float wp = 0.640177*atan(0.00895138*score*100);
+
+  // avoid scientific notation errors that break asserts
+  if (wp > 0.995) {
+    return 1;
+  } else if (wp < -0.995) {
+    return -1;
+  } else {
+    return wp;
+  }
 }
 
 bool extract_lichess_comment_score(const char* comment, float& Q) {
