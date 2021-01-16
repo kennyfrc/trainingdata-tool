@@ -31,7 +31,7 @@
 *.pgn
 
 # Stray gzip files
-supervised-0/*.gz
+/supervised-0/*.gz
 
 \.vs/
 
@@ -57,3 +57,12 @@ trainingdata-tool
 
 Project\.cbp
 
+supervised-*
+
+check_chunks.sh
+
+TODO.md
+
+sl-data
+
+.DS_Store

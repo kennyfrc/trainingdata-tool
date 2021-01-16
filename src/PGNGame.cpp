@@ -7,9 +7,21 @@
 #include <regex>
 #include <sstream>
 #include <vector>
+#include <math.h>
 
+// win probability based on
+// the inverse of the Q to cp formula (111.7 * np.tan(1.5620688421 * q))
 float convert_sf_score_to_win_probability(float score) {
-  return 2 / (1 + exp(-0.4 * score)) - 1;
+  float wp = 0.640177*atan(0.00895138*score*100);
+
+  // avoid scientific notation errors that break asserts
+  if (wp > 0.995) {
+    return 1;
+  } else if (wp < -0.995) {
+    return -1;
+  } else {
+    return wp;
+  }
 }
 
 bool extract_lichess_comment_score(const char* comment, float& Q) {
@@ -62,8 +74,18 @@ PGNGame::PGNGame(pgn_t* pgn) {
   strncpy(this->fen, pgn->fen, PGN_STRING_SIZE);
 
   char str[256];
+  int move_no = 0;
   while (pgn_next_move(pgn, str, 256)) {
-    this->moves.emplace_back(str, pgn->last_read_comment, pgn->last_read_nag);
+    if(pgn->variation == false) {
+      move_no += 1;
+      this->moves.emplace_back(str, pgn->last_read_comment, pgn->last_read_nag, move_no);
+      // std::cout << "Move number: " << move_no << std::endl;
+      // std::cout << "Move: " << str << std::endl;
+    } else {
+      this->variations.emplace_back(str, pgn->last_read_comment, pgn->last_read_nag, move_no);
+      // std::cout << "Within Move number: " << move_no << std::endl;
+      // std::cout << "Variation: " << str << std::endl;
+    }
   }
 }
 
@@ -94,7 +116,9 @@ std::vector<lczero::V4TrainingData> PGNGame::getChunks(Options options) const {
 
   lczero::PositionHistory position_history;
   position_history.Reset(starting_board, 0, 0);
+
   board_t board[1];
+
   board_from_fen(board, starting_fen.c_str());
 
   lczero::GameResult game_result;
@@ -110,19 +134,42 @@ std::vector<lczero::V4TrainingData> PGNGame::getChunks(Options options) const {
   }
 
   char str[256];
+  std::vector<PGNMoveInfo> variations;
   for (auto pgn_move : this->moves) {
     // Extract move from pgn
     int move = move_from_san(pgn_move.move, board);
     if (move == MoveNone || !move_is_legal(move, board)) {
-      std::cout << "illegal move \"" << pgn_move.move << std::endl;
+      std::cout << "illegal move: " << pgn_move.move << std::endl;
       break;
     }
 
+    // needs refactoring - ugly regex
     if (options.verbose) {
       move_to_san(move, board, str, 256);
-      std::cout << "Read move: " << str << std::endl;
+      std::cout << "\nRead move: " << str << std::endl;
       if (pgn_move.comment[0]) {
-        std::cout << str << " pgn comment: " << pgn_move.comment << std::endl;
+        // regex
+        const std::string comment = pgn_move.comment;
+        const std::regex no_brackets("[}]");
+        std::stringstream result;
+        std::regex_replace(std::ostream_iterator<char>(result), comment.begin(), comment.end(), no_brackets, "");
+
+        // comment
+        std::cout << str << " main line comment: " << result.str() << std::endl;
+
+        for (auto variation : this->variations) {
+          if(pgn_move.move_no == variation.move_no) {
+            // regex
+            const std::string comment = variation.comment;
+            const std::regex no_brackets("[}]");
+            std::stringstream result;
+            std::regex_replace(std::ostream_iterator<char>(result), comment.begin(), comment.end(), no_brackets, "");
+
+            // comment
+            std::cout << " |-- Read variation: " << variation.move << std::endl;
+            std::cout << "    |-- " <<variation.move << " variation comment: " << result.str() << std::endl;
+          }
+        }
       }
     }
 
@@ -140,6 +187,8 @@ std::vector<lczero::V4TrainingData> PGNGame::getChunks(Options options) const {
     // Convert move to lc0 format
     lczero::Move lc0_move = poly_move_to_lc0_move(move, board);
 
+    // std::cout << "This is how the board looks like [mid]: " << board << std::endl;
+
     bool found = false;
     auto legal_moves = position_history.Last().GetBoard().GenerateLegalMoves();
     for (auto legal : legal_moves) {
@@ -153,9 +202,10 @@ std::vector<lczero::V4TrainingData> PGNGame::getChunks(Options options) const {
                 << square_file(move_to(move)) << std::endl;
     }
 
-    // Extract SF scores and convert to win probability
-    float Q = 0.0f;
+    // Extract engine scores and convert to win probability
+    // Add variation scores too
     if (options.lichess_mode) {
+      // Extract mainline score
       if (pgn_move.comment[0]) {
         float lichess_score;
         bool success =
@@ -163,17 +213,33 @@ std::vector<lczero::V4TrainingData> PGNGame::getChunks(Options options) const {
         if (!success) {
           break;  // Comment contained no "%eval"
         }
-        Q = convert_sf_score_to_win_probability(lichess_score);
+        pgn_move.q = convert_sf_score_to_win_probability(lichess_score);
       } else {
         // This game has no comments, skip it.
         break;
+      }
+
+      // Extract variation score
+
+      for (auto variation : this->variations) {
+        if (variation.move_no == pgn_move.move_no && variation.comment[0]) {
+          float variation_score;
+          bool success =
+              extract_lichess_comment_score(variation.comment, variation_score);
+          if (!success) {
+            break; // Variation contained no eval
+          }
+          variation.q = convert_sf_score_to_win_probability(variation_score);
+          variations.emplace_back(variation.move, variation.comment, variation.nag, variation.move_no, variation.q);
+          // std::cout << "Main Q: " << std::setprecision(5) << variation.q << std::endl;
+        }
       }
     }
 
     if (!(bad_move && options.lichess_mode)) {
       // Generate training data
       lczero::V4TrainingData chunk = get_v4_training_data(
-          game_result, position_history, lc0_move, legal_moves, Q);
+          game_result, position_history, lc0_move, legal_moves, pgn_move.q, variations, pgn_move.move_no, board);
       chunks.push_back(chunk);
       if (options.verbose) {
         std::string result;
@@ -191,8 +257,9 @@ std::vector<lczero::V4TrainingData> PGNGame::getChunks(Options options) const {
             result = "???";
             break;
         }
-        std::cout << "Write chunk: [" << lc0_move.as_string() << ", " << result
-                  << ", " << Q << "]\n";
+        std::cout << "Note: for the training chunk, Q and D scores are based on the side's POV." << std::endl; 
+        std::cout << "Write chunk: [" << "Move: " << lc0_move.as_string() << ", " << "Result: " << result
+                  << ", " << "Root Q: " << chunk.root_q << ", " << "Best Q: " << chunk.best_q <<  ", " << "Root D: " << chunk.root_d << ", " << "Best D: " << chunk.best_d <<"]\n";
       }
     }
 

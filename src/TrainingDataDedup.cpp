@@ -54,6 +54,10 @@ void training_data_dedup(TrainingDataReader& reader, TrainingDataWriter& writer,
     new_chunk->best_q = new_chunk->best_q * q_ratio + Z * (1.0f - q_ratio);
     new_chunk->root_q = new_chunk->root_q * q_ratio + Z * (1.0f - q_ratio);
 
+    // printf("q-ratio: %f", q_ratio);
+    // printf("new_chunk->best_q: %f", new_chunk->best_q);
+    // printf("new_chunk->root_q: %f", new_chunk->root_q);
+
     auto elem = chunk_map.find(*new_chunk);
     if (elem == chunk_map.end()) {
       chunk_map.emplace(*new_chunk, 1);
