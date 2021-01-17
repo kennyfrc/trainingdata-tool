@@ -11,7 +11,7 @@ jobs:
           command: 'sudo apt-get update && sudo apt-get install -y gcc g++'
       - run:
           name: Install CMAKE
-          command: 'sudo apt-get update && sudo apt-get install -y cmake'
+          command: 'sudo apt-get update && sudo apt-get install -y cmake=3.15'
       - run:
           name: Install Boost
           command: 'sudo apt-get update && sudo apt-get install -y libboost-all-dev'
