@@ -26,3 +26,9 @@ jobs:
       - run:
           name: Creating Binary Files
           command: 'cmake --build build'
+      - run:
+          name: 
+          command: cp trainingdata-tool /tmp/trainingdata-tool
+      - store_artifacts:
+          path: /tmp/trainingdata-tool
+          destination: trainingdata-tool-ubuntu-20-04
