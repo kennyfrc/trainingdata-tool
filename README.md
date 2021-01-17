@@ -33,14 +33,14 @@ With uci-analyser, you can generate evals for both the mainline and variations. 
 However, uci-analyser is only compatible with stockfish. So if you want to distill other lc0 weights and other AB engines, you will likely have to modify `analyse.cpp` in uci-analyser to make it compatible. An lc0 compatible pgn writer is [lichess-artist](https://github.com/kennyfrc/lichess-artist) but it's an order of magnitude slower than that of uci-analyser.
 
 
-## Usage - Z data only
+## Usage - No Q Data
 
 Pass the PGN input file and it will output training data in the same way lc0 selfplay does. Example:
 ```
 trainingdata-tool Kasparov.pgn -max-games-to-convert 1000000 -files-per-dir 100000 -chunks-per-file 135
 ```
 
-## Usage - Z, Q, and Policy data
+## Usage - Q and Policy data
 
 To train with your generated Q and/or policy data, add the `-lichess-mode` flag. You'll need to use a pgn writer that uses the lichess format.
 
@@ -64,6 +64,33 @@ Below is an example of a pgn (clipped after the 5th move for space) that uses th
 
 1. Nf3 { [%eval 0.34] } (1. e4 { [%eval 0.34] }) (1. Nc3 { [%eval 0.17] }) (1. d4 { [%eval 0.17] }) (1. e3 { [%eval 0.09] }) (1. a3 { [%eval -0.18] }) 1... Nf6 { [%eval -0.54] } (1... e5 { [%eval -0.54] }) (1... d5 { [%eval -0.67] }) (1... Nc6 { [%eval -0.67] }) (1... e6 { [%eval -0.90] }) (1... a6 { [%eval -1.00] }) 2. c4 { [%eval 0.78] } (2. e4 { [%eval 0.78] }) (2. d4 { [%eval 0.32] }) (2. Nc3 { [%eval 0.12] }) (2. g4 { [%eval 0.02] }) (2. a4 { [%eval -0.55] }) 2... g6 { [%eval 0.37] } (2... e5 { [%eval 0.37] }) (2... Nc6 { [%eval -0.01] }) (2... d5 { [%eval -0.15] }) (2... e6 { [%eval -0.18] }) (2... d6 { [%eval -0.41] }) (2... h6 { [%eval -0.48] }) 3. Nc3 { [%eval 0.70] } (3. e4 { [%eval 0.70] }) (3. d4 { [%eval 0.32] }) (3. a3 { [%eval 0.09] }) (3. d3 { [%eval 0.05] }) (3. g3 { [%eval -0.01] }) 3... d5 { [%eval -0.63] } (3... Bg7 { [%eval -0.63] }) (3... d6 { [%eval -0.63] }) (3... e5 { [%eval -0.69] }) (3... c5 { [%eval -1.01] }) (3... c6 { [%eval -1.30] }) 4. Qa4+ { [%eval 0.88] } (4. cxd5 { [%eval 0.88] }) (4. d4 { [%eval 0.59] }) (4. e3 { [%eval 0.29] }) (4. Nxd5 { [%eval -0.03] }) (4. d3 { [%eval -0.27] }) (4. c5 { [%eval -0.43] }) 4... c6 { [%eval 0.35] } (4... Bd7 { [%eval 0.35] }) (4... Qd7 { [%eval -0.48] }) (4... Nc6 { [%eval -0.60] }) (4... b5 { [%eval -0.82] }) (4... Nbd7 { [%eval -1.25] }) 5. cxd5 { [%eval 0.48] } (5. Nxd5 { [%eval -0.09] }) (5. d4 { [%eval -0.12] }) (5. d3 { [%eval -0.29] }) (5. c5 { [%eval -0.63] }) (5. e3 { [%eval -0.67] }) 5... b5 { [%eval -0.32] } (5... Bg7 { [%eval -0.60] }) (5... Bd7 { [%eval -0.74] }) (5... a6 { [%eval -0.88] }) (5... Nxd5 { [%eval -1.01] }) (5... Qb6 { [%eval -1.03] })
 ```
+
+Under verbose mode, this is how the output will look like with variations:
+
+```
+Read move: Ne4
+Ne4 main line comment:  [%eval 0.63]
+ |-- Read variation: Kg2
+    |-- Kg2 variation comment:  [%eval 0.00]
+ |-- Read variation: Bxh6
+    |-- Bxh6 variation comment:  [%eval -0.26]
+ |-- Read variation: e3
+    |-- e3 variation comment:  [%eval -0.36]
+ |-- Read variation: e4
+    |-- e4 variation comment:  [%eval -0.51]
+ |-- Read variation: a4
+    |-- a4 variation comment:  [%eval -0.62]
+Write chunk: [Move: c3e4, Result: 1-0, Root Q: 0.328718, Best Q: 0.328718, Root D: 0.503461, Best D: 0.75]
+```
+
+If you don't have variations, it also works fine:
+
+```
+Read move: Ka7
+Ka7 main line comment:  [%eval -15.07]
+Write chunk: [Move: b1a2, Result: 1-0, Root Q: -0.958218, Best Q: -0.958218, Root D: 0.0271585, Best D: 0.0271585]
+```
+
 
 ## Usage - Other options
 
