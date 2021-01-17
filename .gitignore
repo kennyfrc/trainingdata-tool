@@ -69,3 +69,5 @@ TODO.md
 sl-data
 
 .DS_Store
+
+*.log

@@ -15,6 +15,8 @@ lczero::V4TrainingData get_v4_training_data(
 struct MovePolicy {
     lczero::Move played;
     float q_value;
+    // add a q_value_weight for policy generation
+    float q_value_weight;
     float d_value;
     float policy_weight;
 

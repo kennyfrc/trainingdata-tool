@@ -14,11 +14,13 @@
 float convert_sf_score_to_win_probability(float score) {
   float wp = 0.640177*atan(0.00895138*score*100);
 
-  // avoid scientific notation errors that break asserts
-  if (wp > 0.995) {
+  // avoid assertion errors due to very tiny values
+  if (wp >= 0.99) {
     return 1;
-  } else if (wp < -0.995) {
+  } else if (wp <= -0.99) {
     return -1;
+  } else if (wp >= -0.01 && wp <= 0.01) {
+    return 0;
   } else {
     return wp;
   }
@@ -257,7 +259,6 @@ std::vector<lczero::V4TrainingData> PGNGame::getChunks(Options options) const {
             result = "???";
             break;
         }
-        std::cout << "Note: for the training chunk, Q and D scores are based on the side's POV." << std::endl; 
         std::cout << "Write chunk: [" << "Move: " << lc0_move.as_string() << ", " << "Result: " << result
                   << ", " << "Root Q: " << chunk.root_q << ", " << "Best Q: " << chunk.best_q <<  ", " << "Root D: " << chunk.root_d << ", " << "Best D: " << chunk.best_d <<"]\n";
       }
