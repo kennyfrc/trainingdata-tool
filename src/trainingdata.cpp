@@ -30,8 +30,7 @@ std::vector<MovePolicy> transform_with_softmax(std::vector<MovePolicy> move_poli
   }
 
   // d score was also snuck in here
-  // this is more of a heuristic than a "scientific" decision
-  // black has higher draw probability than white
+  // based on https://en.chessbase.com/post/has-the-number-of-draws-in-chess-increased
 
   for(auto move : move_policies) {
     MovePolicy updated_move;
@@ -39,7 +38,7 @@ std::vector<MovePolicy> transform_with_softmax(std::vector<MovePolicy> move_poli
       updated_move.played = move.played;
       updated_move.q_value = move.q_value;
       updated_move.q_value_weight = -move.q_value_weight;
-      updated_move.d_value = (-move.q_value_weight) > 0.0f ? (1.0f-(-move.q_value_weight))*0.50f : (1.0f-(move.q_value_weight))*0.50f;
+      updated_move.d_value = (-move.q_value_weight) > 0.0f ? (1.0f-(-move.q_value_weight))*0.65f : (1.0f-(move.q_value_weight))*0.65f;
       updated_move.policy_weight = exp(-move.q_value_weight) / k_sum;
       final_move_policies.emplace_back(updated_move);
       assert(updated_move.d_value >= 0 && updated_move.d_value <= 1);
@@ -48,7 +47,7 @@ std::vector<MovePolicy> transform_with_softmax(std::vector<MovePolicy> move_poli
       updated_move.played = move.played;
       updated_move.q_value = move.q_value;
       updated_move.q_value_weight = move.q_value_weight;
-      updated_move.d_value = move.q_value_weight > 0.0f ? (1.0f-(move.q_value_weight))*0.25f : (1.0f-(-move.q_value_weight))*0.25f;
+      updated_move.d_value = move.q_value_weight > 0.0f ? (1.0f-(move.q_value_weight))*0.75f : (1.0f-(-move.q_value_weight))*0.75f;
       updated_move.policy_weight = exp(move.q_value_weight) / k_sum;
       final_move_policies.emplace_back(updated_move);
       assert(updated_move.d_value >= 0 && updated_move.d_value <= 1);
@@ -60,8 +59,6 @@ std::vector<MovePolicy> transform_with_softmax(std::vector<MovePolicy> move_poli
   for (auto move : final_move_policies) {
     policy_sum += move.policy_weight;
   }
-
-  std::cout << "policy_sum: " << policy_sum << std::endl;
 
   return final_move_policies;
 }
@@ -93,16 +90,18 @@ lczero::V4TrainingData get_v4_training_data(
   MovePolicy main_move;
   main_move.played = played_move;
   main_move.q_value = Q;
+  main_move.q_value_weight = Q;
   main_move.policy_weight = 0.0f;
 
   if(history.Last().IsBlackToMove()) {
-    main_move.d_value = (-Q) > 0.0f ? (1.0f-(-Q))*0.50f : (1.0f-(Q))*0.50f;
+    main_move.d_value = (-Q) > 0.0f ? (1.0f-(-Q))*0.65f : (1.0f-(Q))*0.65f;
   } else {
-    main_move.d_value = Q > 0.0f ? (1.0f-(Q))*0.25f : (1.0f-(-Q))*0.25f;
+    main_move.d_value = Q > 0.0f ? (1.0f-(Q))*0.75f : (1.0f-(-Q))*0.75f;
   }
 
   assert(main_move.d_value >= 0 && main_move.d_value <= 1);
   assert(main_move.q_value >= -1 && main_move.q_value <= 1);
+  assert(main_move.q_value_weight >= -1 && main_move.q_value_weight <= 1);
 
   move_policies.emplace_back(main_move);
 
@@ -110,12 +109,9 @@ lczero::V4TrainingData get_v4_training_data(
   for (auto variation : variations) {
     if(move_no == variation.move_no) {
       float engine_score;
-      float engine_probability;
       MovePolicy mp_variation;
 
       extract_lichess_comment_score(variation.comment, engine_score);
-
-      engine_probability = convert_sf_score_to_win_probability(engine_score);
 
       int variation_id = move_from_san(variation.move, board_ptr);
       lczero::Move lc0_variation = poly_move_to_lc0_move(variation_id, board_ptr);
@@ -134,10 +130,10 @@ lczero::V4TrainingData get_v4_training_data(
       }
 
       mp_variation.played = lc0_variation;
-      mp_variation.q_value = engine_probability;
+      mp_variation.q_value = convert_sf_score_to_win_probability(engine_score);
 
       // separate attribute as we will mutate this later
-      mp_variation.q_value_weight = engine_probability;
+      mp_variation.q_value_weight = mp_variation.q_value;
 
       // add variation's lc0 move and q into policy vector
       move_policies.emplace_back(mp_variation);

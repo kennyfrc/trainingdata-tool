@@ -14,11 +14,13 @@
 float convert_sf_score_to_win_probability(float score) {
   float wp = 0.640177*atan(0.00895138*score*100);
 
-  // avoid scientific notation errors that break asserts
-  if (wp > 0.995) {
+  // avoid assertion errors due to very tiny values
+  if (wp >= 0.99) {
     return 1;
-  } else if (wp < -0.995) {
+  } else if (wp <= -0.99) {
     return -1;
+  } else if (wp >= -0.01 && wp <= 0.01) {
+    return 0;
   } else {
     return wp;
   }
