@@ -28,7 +28,7 @@ jobs:
           command: 'cmake --build build'
       - run:
           name: 
-          command: cp trainingdata-tool /tmp/trainingdata-tool
+          command: cp /home/circleci/project/build/trainingdata-tool /tmp/trainingdata-tool
       - store_artifacts:
           path: /tmp/trainingdata-tool
           destination: trainingdata-tool-ubuntu-20-04
