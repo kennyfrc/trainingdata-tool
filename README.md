@@ -1,23 +1,22 @@
 # trainingdata-tool
+
 Tool to generate [lc0](https://github.com/LeelaChessZero/lc0) training data. Useful for [Supervised Learning](https://github.com/dkappe/leela-chess-weights/wiki/Supervised-Learning) from PGN games.
 
 ## Compilation Instructions
 
 ### For Linux
 
-```
-./build-linux.sh
-```
+Run `./build-linux.sh`
 
 ### For Mac
 
-```
-./build-mac.sh
-```
+Run `./build-mac.sh`
 
-### For Windows
+## Releases
 
-You may use this [appveyor artifact](https://ci.appveyor.com/project/kennyfrc/trainingdata-tool/build/artifacts) instead: 
+For Windows, you may use this [appveyor artifact](https://ci.appveyor.com/project/kennyfrc/trainingdata-tool/build/artifacts).
+
+For Ubuntu (20.04), sign up to CircleCI. Once logged in, you will find an artifact in this [project folder](https://app.circleci.com/pipelines/github/kennyfrc/trainingdata-tool).
 
 ## Changes compared to the Original
 
@@ -25,6 +24,9 @@ You may use this [appveyor artifact](https://ci.appveyor.com/project/kennyfrc/tr
 * Set D values using [this data](https://en.chessbase.com/post/has-the-number-of-draws-in-chess-increased)
 * Updated the centipawn to Q formula. See [here](https://github.com/LeelaChessZero/lc0/pull/841) for reference.
 
+## Possible Future Updates
+
+* Update from v4 training data to v5 (MLH head).
 
 ## Usage
 Pass the PGN input file and it will output training data in the same way lc0 selfplay does. Example:
