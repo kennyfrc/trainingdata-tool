@@ -44,7 +44,7 @@ trainingdata-tool Kasparov.pgn -max-games-to-convert 1000000 -files-per-dir 1000
 
 To train with your generated Q and/or policy data, add the `-lichess-mode` flag. You'll need to use a pgn writer that uses the lichess format.
 
-Below is an example of a pgn (clipped after the 5th move) that uses the lichess format.
+Below is an example of a pgn (clipped after the 5th move for space) that uses the lichess format.
 
 ```
 [Event "?"]
