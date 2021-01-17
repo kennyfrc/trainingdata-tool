@@ -60,6 +60,18 @@ std::vector<MovePolicy> transform_with_softmax(std::vector<MovePolicy> move_poli
     policy_sum += move.policy_weight;
   }
 
+  // these are tiny 0.0x values (and ensure they are)
+  // these should at best +/- 1% to the main move
+  float remaining_values = (1.0f - policy_sum);
+  assert(remaining_values >= -0.01f && remaining_values <= 0.01f);
+
+  // just place it at the main value to ensure that policy_sum is 1 in the assert
+  final_move_policies.front().policy_weight += remaining_values;
+  policy_sum += remaining_values;
+  
+  // validate transform is successful
+  assert(policy_sum == 1.0f);
+
   return final_move_policies;
 }
 
