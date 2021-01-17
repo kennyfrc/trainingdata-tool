@@ -1,6 +1,8 @@
 # trainingdata-tool
 
-Tool to generate [lc0](https://github.com/LeelaChessZero/lc0) training data. Useful for [Supervised Learning](https://github.com/dkappe/leela-chess-weights/wiki/Supervised-Learning) from PGN games.
+Tool to generate [lc0](https://github.com/LeelaChessZero/lc0) training data. Useful for [Supervised Learning](https://github.com/dkappe/leela-chess-weights/wiki/Supervised-Learning) from PGN games. 
+
+It has been used to train leela networks to [mimic human playing styles](https://github.com/CSSLab/maia-chess); and it  can also be used distill AB engines (and its various personalities) to a leela network. Experiment and have fun with it.
 
 ## Compilation Instructions
 
@@ -105,3 +107,9 @@ There are 4 options:
 ## Possible Future Updates
 
 * Update from v4 training data to v5 (MLH head).
+
+## Special Thanks
+
+* [Leela Chess Zero](https://github.com/LeelaChessZero/lc0)
+* [DeepMind Alpha Zero](https://github.com/danielwillemsen/alphazero-openspiel)
+* Daniel Uranga and the original contributors of `trainingdata-tool`
