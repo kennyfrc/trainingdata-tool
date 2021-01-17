@@ -3,7 +3,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/buildpack-deps:bionic-scm
+      - image: circleci/buildpack-deps:focal
     steps:
       - checkout
       - run:
@@ -11,7 +11,7 @@ jobs:
           command: 'sudo apt-get update && sudo apt-get install -y gcc g++'
       - run:
           name: Install CMAKE
-          command: 'sudo apt-get update && sudo apt-get install -y cmake=3.15.2'
+          command: 'sudo apt-get update && sudo apt-get install -y cmake'
       - run:
           name: Install Boost
           command: 'sudo apt-get update && sudo apt-get install -y libboost-all-dev'
