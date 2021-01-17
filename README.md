@@ -2,7 +2,7 @@
 
 Tool to generate [lc0](https://github.com/LeelaChessZero/lc0) training data. Useful for [Supervised Learning](https://github.com/dkappe/leela-chess-weights/wiki/Supervised-Learning) from PGN games. 
 
-It has been used to train leela networks that [mimic <2000 elo players](https://github.com/CSSLab/maia-chess). It can also be used distill AB engines (and its various personalities) to a leela network. Experiment and have fun with your own nets.
+It has been used to train leela networks that [mimic human playing styles](https://github.com/CSSLab/maia-chess) and it can also be used distill AB engines (and its various personalities) into to a leela network. Experiment and have fun with it!
 
 ## Compilation Instructions
 
